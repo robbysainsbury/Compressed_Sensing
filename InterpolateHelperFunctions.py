@@ -26,11 +26,15 @@ def combine_pressure_row(row):
         return  row['pressure_hobo']
     elif not math.isnan(row['pressure_filled']) and not math.isnan(row['pressure_hobo']):
         return  row['pressure_hobo']
+    elif math.isnan(row['pressure_filled']) and math.isnan(row['pressure_hobo']) and not math.isnan(row['rolling_average']):
+        return  row['rolling_average']
     else:
         return np.nan
 
 def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,window_width,column):
 
+
+    
     ysMissing_df = site_df.iloc[::sample_down_to, :] #sampling only every __ measurement to save on memory
     ysMissing = np.asarray(ysMissing_df[column])
 

@@ -29,7 +29,7 @@ def combine_pressure_row(row):
     else:
         return np.nan
 
-def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,column):
+def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,window_width,column):
 
     ysMissing_df = site_df.iloc[::sample_down_to, :] #sampling only every __ measurement to save on memory
     ysMissing = np.asarray(ysMissing_df[column])
@@ -44,8 +44,18 @@ def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,column):
     sparse_joined_df = all_days.merge(joined_df, on='datetime', how='left')
     sparse_joined_df = sparse_joined_df.loc[:,['datetime','index','pressure_filled']].merge(site_df.loc[:,['datetime','pressure_hobo']], on='datetime', how='left')
 
+    sparse_joined_df["rolling_average"] = np.nan
+
     # create a new column and use np.select to assign values to it using our lists as arguments
     sparse_joined_df['pressure_combined'] = sparse_joined_df.apply(combine_pressure_row, axis=1)
+
+    # creating rolling average column that will fill in gaps left by down sampling
+    sparse_joined_df["rolling_average"] = sparse_joined_df["pressure_combined"].rolling(min_periods=1, center=True, window=window_width).mean()
+
+    #merging the actual, interpolated, and rolling average columns
+    sparse_joined_df['pressure_combined_filled'] = sparse_joined_df.apply(combine_pressure_row, axis=1)
+
+
     print("NAs per column:")
     print(sparse_joined_df.isna().sum()/sparse_joined_df.shape[0])
     return sparse_joined_df

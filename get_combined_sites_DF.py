@@ -13,7 +13,7 @@ def round_dt(dt):
     delta = timedelta(minutes=15)
     return datetime.min + round((dt - datetime.min) / delta) * delta
 
-site_names_list = ['BEN', 'BLI', 'BSL', 'CLE', 'CRB', 'DAI', 'DFF', 'DFL', 'DFM', 'DFU', 'HCL', 'HCN', 'HCS', 'IND', 'LAK', 'LDF', 'MIT', 'NEB', 'PBC', 'SBL', 'SFL', 'SHE', 'SHE (1)', 'SOL', 'SOL (1)', 'STR', 'TCU', 'TIE', 'WAN']
+site_names_list = ['BEN', 'BLI', 'BSL', 'CLE', 'CRB', 'DAI', 'DFF', 'DFL', 'DFM', 'DFU', 'HCL', 'HCN', 'HCS', 'IND', 'LAK', 'LDF', 'MIT', 'NEB', 'PBC', 'SBL', 'SFL', 'SHE', 'SHE_', 'SOL', 'SOL_', 'STR', 'TCU', 'TIE', 'WAN']
   
 # use glob to get all the csv files 
 # in the folder

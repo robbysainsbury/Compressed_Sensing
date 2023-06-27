@@ -31,15 +31,16 @@ def combine_pressure_row(row):
     else:
         return np.nan
 
-def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,window_width,column):
+def down_sample_and_interpolate_once(site_df,all_days,matrix_size,window_width,column):
 
+    sample_down_to = int(site_df.shape[0]/(2*matrix_size + 1))
 
-    
+    print(f"Down sampling to: {sample_down_to}")
     ysMissing_df = site_df.iloc[::sample_down_to, :] #sampling only every __ measurement to save on memory
     ysMissing = np.asarray(ysMissing_df[column])
 
     method="SLSQP" # "BFGS", etc. see the method paramter here -> https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html
-    numBases = int((ysMissing.shape[0]/2) + 1)
+    numBases = matrix_size
     sparse_interpolator = CompresedSensingInterpolator()
     ysComplete = sparse_interpolator.interpolate(ysMissing, numBases=numBases, method=method)
 
@@ -60,8 +61,8 @@ def down_sample_and_interpolate_once(site_df,all_days,sample_down_to,window_widt
     sparse_joined_df['pressure_combined_filled'] = sparse_joined_df.apply(combine_pressure_row, axis=1)
 
 
-    print("NAs per column:")
-    print(sparse_joined_df.isna().sum()/sparse_joined_df.shape[0])
+    #print("NAs per column:")
+    #print(sparse_joined_df.isna().sum()/sparse_joined_df.shape[0])
     return sparse_joined_df
 
 def down_sample_and_interpolate(site_df,all_days,sample_down_to):

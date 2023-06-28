@@ -33,7 +33,7 @@ def combine_pressure_row(row):
 
 def down_sample_and_interpolate_once(site_df,all_days,matrix_size,window_width,column):
 
-    sample_down_to = int(site_df.shape[0]/(2*matrix_size + 1))
+    sample_down_to = math.ceil(site_df.shape[0]/(2*matrix_size + 1))
 
     print(f"Down sampling to: {sample_down_to}")
     ysMissing_df = site_df.iloc[::sample_down_to, :] #sampling only every __ measurement to save on memory
